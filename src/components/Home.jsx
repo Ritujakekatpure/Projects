@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
 import productService from "../service/product.service";
 import { Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useLocation } from "react-router-dom";
+
 
 const Home = () => {
   const [productList, setProductList] = useState([]);
-  
-  const [msg, setMsg] = useState("");
+
   useEffect(() => {
     init();
   }, []);
+
+  const location = useLocation();
+  useEffect(() => {
+    if (location.state && location.state.showToast) {
+      toast.success("Edit Successfully"); // Editsuccess toast
+    }
+  }, [location.state]);
 
   const init = () => {
     productService
@@ -25,7 +35,7 @@ const Home = () => {
     productService
       .deleteProduct(id)
       .then((res) => {
-        setMsg("Delete Sucessfully");
+        toast.success("Delete Successfully"); // Delete success toast
         init();
       })
       .catch((error) => {
@@ -41,17 +51,15 @@ const Home = () => {
             <div className="card">
               <div className="card-header fs-3 text-center">
                 All Product List
-                {msg && <p className="fs-4 text-center text-success">{msg}</p>}
               </div>
               <div className="card-body">
-                <table class="table">
+                <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">SL No.</th>
                       <th scope="col">Product Name</th>
                       <th scope="col">Warranty</th>
                       <th scope="col">BillNumber</th>
-                      {/* <th scope="col">Status</th> */}
                       <th scope="col">Date</th>
                       <th scope="col">Action</th>
                       <th scope="col">Assign</th>
@@ -59,12 +67,11 @@ const Home = () => {
                   </thead>
                   <tbody>
                     {productList.map((p, num) => (
-                      <tr>
+                      <tr key={p.id}>
                         <td>{num + 1}</td>
                         <td>{p.productName}</td>
                         <td>{p.warranty}</td>
                         <td>{p.billNumber}</td>
-                        {/* <td>{p.status}</td> */}
                         <td>{p.date}</td>
                         <td>
                           <Link
@@ -81,10 +88,10 @@ const Home = () => {
                           </button>
                         </td>
                         <td>
-                          <button className="btn btn-sm btn-primary ">
+                          <button className="btn btn-sm btn-primary">
                             Assign
                           </button>
-                          <button className="btn btn-sm btn-danger ms-1 ">
+                          <button className="btn btn-sm btn-danger ms-1">
                             Unassign
                           </button>
                         </td>
@@ -97,6 +104,8 @@ const Home = () => {
           </div>
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };

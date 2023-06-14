@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import productService from "../service/product.service";
-
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const EditProduct = () => {
   const [product, setProduct] = useState({
     id: "",
     productName: "",
     warranty: "",
     billNumber: "",
-    // status: "",
     date: "" 
   });
 
@@ -37,24 +37,19 @@ const EditProduct = () => {
 
   const ProductUpdate = (e) => {
     e.preventDefault();
-
+  
     productService
       .editProduct(product)
       .then((res) => {
-        // setMsg("Product Updated Sucessfully");
-        // setProduct({
-        //   productName: "",
-        //   description: "",
-        //   price: "",
-        //   status: "",
-        //   date:"",
-        //  } )
-        navigate("/");
+        toast.success("Edit Successfully"); // Show success toast
+        navigate("/", { state: { showToast: true } });
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <>
@@ -63,7 +58,7 @@ const EditProduct = () => {
           <div className="col-md-6 offset-md-3">
             <div className="card">
               <div className="card-header fs-3 text-center">Edit Product</div>
-              {msg && <p className="fs-4 text-center text-success">{msg}</p>}
+              
 
               <div className="card-body">
                 <form onSubmit={(e) => ProductUpdate(e)}>
@@ -101,17 +96,6 @@ const EditProduct = () => {
                     />
                   </div>
 
-                  {/* <div className="mb-3">
-                    <label>Enter Status</label>
-                    <input
-                      type="text"
-                      name="status"
-                      className="form-control"
-                      onChange={(e) => handleChange(e)}
-                      value={product.status}
-                    />
-                  </div> */}
-
                   <div className="mb-3">
                     <label>Enter date</label>
                     <input
@@ -120,10 +104,12 @@ const EditProduct = () => {
                       className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={product.date}
+                      max={currentDate}
                     />
                   </div>
 
                   <button className="btn btn-primary col-md-12">Update</button>
+
                 </form>
               </div>
             </div>

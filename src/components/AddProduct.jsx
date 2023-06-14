@@ -1,51 +1,78 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import productService from "../service/product.service.js";
 
-
 const AddProduct = () => {
-  const [msg, setMsg] = useState("");
-
-
-
   const [product, setProduct] = useState({
     productName: "",
     warranty: "",
     billNumber: "",
-    // status:"",
     date: "",
   });
+   
+
+  const [errors , setErrors]= useState({})
+  const [isSubmit , setIsSubmit]= useState(false);
 
   const handleChange = (e) => {
     const value = e.target.value;
     setProduct({ ...product, [e.target.name]: value });
   };
 
- 
-
   const ProductRegister = (e) => {
     e.preventDefault();
-    // console.log(product);
+
+    setErrors( Validate(product));
+
     productService
       .saveProduct(product)
       .then((res) => {
-        console.log("Product Added Sucessfully");
-        setMsg("Product Added Sucessfully");
+        toast.success("Product Added Successfully");
         setProduct({
           productName: "",
           warranty: "",
           billNumber: "",
-          // status:"",
           date: "",
         });
-        // let isValid = validateForm();
-        // console.log(isValid);
       })
       .catch((error) => {
         console.log(error);
       });
   };
 
-  
+  const Validate = (product) =>{
+    const err = {};
+    if(!product.productName)
+    {
+      err.productName="product name is required";
+    }
+    if(!product.warranty)
+    {
+      err.warranty="Warranty is required";
+    }
+    if(!product.billNumber)
+    {
+      err.billNumber="Bill number is required";
+    }
+    if(!product.date)
+    {
+      err.date="date  is required";
+    }
+    else
+    {
+      err.productName="";
+    }
+    return err;
+  }
+
+  useEffect(()=>{
+    if(Object.keys(errors).length===0 && isSubmit)
+    console.log(product);
+  }
+  ,[errors])
+
+  const currentDate = new Date().toISOString().split("T")[0];
 
   return (
     <>
@@ -54,7 +81,6 @@ const AddProduct = () => {
           <div className="col-md-6 offset-md-3">
             <div className="card">
               <div className="card-header fs-3 text-center">Add Product</div>
-              {msg && <p className="fs-4 text-center text-success">{msg}</p>}
               <div className="card-body">
                 <form onSubmit={(e) => ProductRegister(e)}>
                   <div className="mb-3">
@@ -62,12 +88,11 @@ const AddProduct = () => {
                     <input
                       type="text"
                       name="productName"
-                      required
                       className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={product.productName}
                     />
-                   
+                  <p style={{color:"red",fontWeight:"bold"}}>{errors.productName}</p>
                   </div>
 
                   <div className="mb-3">
@@ -75,11 +100,11 @@ const AddProduct = () => {
                     <input
                       type="text"
                       name="warranty"
-                      required
                       className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={product.warranty}
                     />
+                    <p style={{color:"red",fontWeight:"bold"}}>{errors.warranty}</p>
                   </div>
 
                   <div className="mb-3">
@@ -87,47 +112,41 @@ const AddProduct = () => {
                     <input
                       type="text"
                       name="billNumber"
-                      required
                       className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={product.billNumber}
                     />
+                    <p style={{color:"red",fontWeight:"bold"}}>{errors.billNumber}</p>
                   </div>
-
-                  {/* <div className="mb-3">
-                    <label> Enter Status </label>
-                    <input
-                      type="text"
-                      name="status"
-                      className="form-control"
-                      onChange={(e) => handleChange(e)}
-                      value={product.status}
-                    />
-                  </div> */}
 
                   <div className="mb-3">
                     <label> Enter Date </label>
                     <input
                       type="date"
                       name="date"
-                      required
                       className="form-control"
                       onChange={(e) => handleChange(e)}
                       value={product.date}
+                      max={currentDate}
                     />
+                    <p style={{color:"red",fontWeight:"bold"}}>{errors.date}</p>
                   </div>
-
-                  <button className="btn btn-primary col-md-12">Submit</button>
+                  <button className="btn btn-primary col-md-4 ms-4">
+                    Submit
+                  </button>
+                  <button className="btn btn-primary col-md-4 ms-4 ">
+                    Cancel
+                  </button>
                 </form>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };
 
 export default AddProduct;
-
-
