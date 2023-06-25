@@ -3,13 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import productService from "../service/product.service";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const EditProduct = () => {
   const [product, setProduct] = useState({
     id: "",
     productName: "",
     warranty: "",
     billNumber: "",
-    date: "" 
+    date: "",
   });
 
   const navigate = useNavigate();
@@ -37,11 +38,31 @@ const EditProduct = () => {
 
   const ProductUpdate = (e) => {
     e.preventDefault();
-  
+
+    //Validating fields
+    if (!product.productName) {
+      toast.error(`Please enter product name`);
+      return;
+    }
+
+    if (!product.warranty) {
+      toast.error(`Please enter Warranty`);
+      return;
+    }
+    if (!product.billNumber) {
+      toast.error(`Please enter Bill number`);
+      return;
+    }
+    if (!product.date) {
+      toast.error(`Please enter Date`);
+      return;
+    }
+
     productService
       .editProduct(product)
       .then((res) => {
         toast.success("Edit Successfully"); // Show success toast
+
         navigate("/", { state: { showToast: true } });
       })
       .catch((error) => {
@@ -58,11 +79,9 @@ const EditProduct = () => {
           <div className="col-md-6 offset-md-3">
             <div className="card">
               <div className="card-header fs-3 text-center">Edit Product</div>
-              
 
               <div className="card-body">
                 <form onSubmit={(e) => ProductUpdate(e)}>
-
                   <div className="mb-3">
                     <label>Enter Product Name</label>
                     <input
@@ -109,13 +128,13 @@ const EditProduct = () => {
                   </div>
 
                   <button className="btn btn-primary col-md-12">Update</button>
-
                 </form>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 };

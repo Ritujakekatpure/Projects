@@ -1,5 +1,6 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import productService from "../service/product.service.js";
 
@@ -10,10 +11,9 @@ const AddProduct = () => {
     billNumber: "",
     date: "",
   });
-   
 
-  const [errors , setErrors]= useState({})
-  const [isSubmit , setIsSubmit]= useState(false);
+  // const [errors, setErrors] = useState({});
+  // const [isSubmit, setIsSubmit] = useState(false);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -23,7 +23,27 @@ const AddProduct = () => {
   const ProductRegister = (e) => {
     e.preventDefault();
 
-    setErrors( Validate(product));
+    // setErrors(Validate(product));
+
+    //Validating fields
+
+    if (!product.productName) {
+      toast.error(`Please enter product name`);
+      return;
+    }
+
+    if (!product.warranty) {
+      toast.error(`Please enter Warranty`);
+      return;
+    }
+    if (!product.billNumber) {
+      toast.error(`Please enter Bill number`);
+      return;
+    }
+    if (!product.date) {
+      toast.error(`Please enter Date`);
+      return;
+    }
 
     productService
       .saveProduct(product)
@@ -41,36 +61,28 @@ const AddProduct = () => {
       });
   };
 
-  const Validate = (product) =>{
-    const err = {};
-    if(!product.productName)
-    {
-      err.productName="product name is required";
-    }
-    if(!product.warranty)
-    {
-      err.warranty="Warranty is required";
-    }
-    if(!product.billNumber)
-    {
-      err.billNumber="Bill number is required";
-    }
-    if(!product.date)
-    {
-      err.date="date  is required";
-    }
-    else
-    {
-      err.productName="";
-    }
-    return err;
-  }
+  // const Validate = (product) => {
+  //   const err = {};
+  //   if (!product.productName) {
+  //     err.productName = "product name is required";
+  //   }
+  //   if (!product.warranty) {
+  //     err.warranty = "Warranty is required";
+  //   }
+  //   if (!product.billNumber) {
+  //     err.billNumber = "Bill number is required";
+  //   }
+  //   if (!product.date) {
+  //     err.date = "date  is required";
+  //   } else {
+  //     err.productName = "";
+  //   }
+  //   return err;
+  // };
 
-  useEffect(()=>{
-    if(Object.keys(errors).length===0 && isSubmit)
-    console.log(product);
-  }
-  ,[errors])
+  // useEffect(() => {
+  //   if (Object.keys(errors).length === 0 && isSubmit) console.log(product);
+  // }, [errors]);
 
   const currentDate = new Date().toISOString().split("T")[0];
 
@@ -92,7 +104,9 @@ const AddProduct = () => {
                       onChange={(e) => handleChange(e)}
                       value={product.productName}
                     />
-                  <p style={{color:"red",fontWeight:"bold"}}>{errors.productName}</p>
+                    {/* <p style={{ color: "red", fontWeight: "bold" }}>
+                      {errors.productName}
+                    </p> */}
                   </div>
 
                   <div className="mb-3">
@@ -104,7 +118,9 @@ const AddProduct = () => {
                       onChange={(e) => handleChange(e)}
                       value={product.warranty}
                     />
-                    <p style={{color:"red",fontWeight:"bold"}}>{errors.warranty}</p>
+                    {/* <p style={{ color: "red", fontWeight: "bold" }}>
+                      {errors.warranty}
+                    </p> */}
                   </div>
 
                   <div className="mb-3">
@@ -116,7 +132,9 @@ const AddProduct = () => {
                       onChange={(e) => handleChange(e)}
                       value={product.billNumber}
                     />
-                    <p style={{color:"red",fontWeight:"bold"}}>{errors.billNumber}</p>
+                    {/* <p style={{ color: "red", fontWeight: "bold" }}>
+                      {errors.billNumber}
+                    </p> */}
                   </div>
 
                   <div className="mb-3">
@@ -129,14 +147,16 @@ const AddProduct = () => {
                       value={product.date}
                       max={currentDate}
                     />
-                    <p style={{color:"red",fontWeight:"bold"}}>{errors.date}</p>
+                    {/* <p style={{ color: "red", fontWeight: "bold" }}>
+                      {errors.date}
+                    </p> */}
                   </div>
                   <button className="btn btn-primary col-md-4 ms-4">
                     Submit
                   </button>
-                  <button className="btn btn-primary col-md-4 ms-4 ">
+                  <Link to={"/"} className="btn btn-primary col-md-4 ms-4">
                     Cancel
-                  </button>
+                  </Link>
                 </form>
               </div>
             </div>

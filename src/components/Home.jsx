@@ -5,7 +5,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLocation } from "react-router-dom";
 
-
 const Home = () => {
   const [productList, setProductList] = useState([]);
 
@@ -48,8 +47,11 @@ const Home = () => {
       <div className="container mt-3">
         <div className="row">
           <div className="col-md-12">
-            <div className="card">
-              <div className="card-header fs-3 text-center">
+            <Link to={"addProduct"} className="btn  btn-success">
+              Add Product
+            </Link>
+            <div className="card mt-3">
+              <div className="card-header fs-3 text-center ">
                 All Product List
               </div>
               <div className="card-body">
